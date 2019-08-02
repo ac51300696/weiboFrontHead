@@ -7,15 +7,15 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="180px" align="center" label="Date">
+      <el-table-column width="180px" align="center" label="博主名">
         <template slot-scope="scope">
-          <span>{{ scope.row.createdAt }}</span>
+          <span>{{ scope.row.userName }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="120px" align="center" label="Author">
+      <el-table-column width="300px" align="center" label="微博文案">
         <template slot-scope="scope">
-          <span>{{ scope.row.title }}</span>
+          <span>{{ scope.row.cleanCommodityDescribe }}</span>
         </template>
       </el-table-column>
 
@@ -33,9 +33,27 @@
         </template>
       </el-table-column> -->
 
-      <el-table-column min-width="300px" label="Title">
+      <el-table-column min-width="300px" label="图片">
         <template slot-scope="{row}">
-          <span>{{ row.content }}</span>
+          <el-image
+            :src="'data:image/jpeg;base64,' + row.pic_base64_list[0]"
+            :preview-src-list="row.pic_base64_list | imageMap"
+          />
+          <!-- <div class="imageList">
+            <img v-for="(item, index) in row.pic_base64_list" :key="index" :src="'data:image/jpeg;base64,' + item">
+          </div> -->
+        </template>
+      </el-table-column>
+      <el-table-column min-width="100px" label="微博的时间">
+        <template slot-scope="{row}">
+          <span>{{ row.edit_time }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column class-name="status-col" label="Status" width="80">
+        <template slot-scope="{row}">
+          <el-tag :type="row.release_num | statusFilter">
+            {{ row.release_num }}
+          </el-tag>
         </template>
       </el-table-column>
       <!-- <el-table-column align="center" label="Actions" width="120">
@@ -63,11 +81,14 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+        0: 'success',
+        1: 'info',
+        2: 'danger'
       }
       return statusMap[status]
+    },
+    imageMap(list) {
+      return list.map(e => { return `data:image/jpeg;base64,${e}` })
     }
   },
   data() {
@@ -99,7 +120,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang='scss'>
 .edit-input {
   padding-right: 100px;
 }
@@ -107,5 +128,17 @@ export default {
   position: absolute;
   right: 15px;
   top: 10px;
+}
+.imageList{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  flex-wrap: wrap;
+  img{
+    width: 90px;
+    height: auto;
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
 }
 </style>
