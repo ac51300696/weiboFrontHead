@@ -51,8 +51,8 @@
       </el-table-column>
       <el-table-column class-name="status-col" label="Status" width="80">
         <template slot-scope="{row}">
-          <el-tag :type="row.release_num | statusFilter">
-            {{ row.release_num }}
+          <el-tag :type="row.release_num | statusFilter" @click="changeStatus(row)">
+            {{ row.release_num | statusTextFilter }}
           </el-tag>
         </template>
       </el-table-column>
@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/article'
+import { fetchList, updateArticle } from '@/api/article'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
@@ -84,6 +84,14 @@ export default {
         0: 'success',
         1: 'info',
         2: 'danger'
+      }
+      return statusMap[status]
+    },
+    statusTextFilter(status) {
+      const statusMap = {
+        0: '未读',
+        1: '已读',
+        2: '废弃'
       }
       return statusMap[status]
     },
@@ -107,6 +115,13 @@ export default {
     this.getList()
   },
   methods: {
+    changeStatus(row) {
+      const release_num = row.release_num ? 0 : 1
+      const params = { release_num }
+      updateArticle(row._id, params).then(response => {
+        row.release_num = release_num
+      })
+    },
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
