@@ -33,7 +33,7 @@
         </template>
       </el-table-column> -->
 
-      <el-table-column min-width="300px" label="图片">
+      <el-table-column min-width="200px" label="图片">
         <template slot-scope="{row}">
           <el-image
             :src="'data:image/jpeg;base64,' + row.pic_base64_list[0]"
@@ -44,9 +44,16 @@
           </div> -->
         </template>
       </el-table-column>
-      <el-table-column min-width="100px" label="微博的时间">
+      <el-table-column min-width="120px" label="微博的时间">
         <template slot-scope="{row}">
           <span>{{ row.edit_time }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="100px" label="清理后推广链接">
+        <template slot-scope="{row}">
+          <div v-for="item in getCleanLink(row.cleanCommodityLink)" :key="item">
+            <a class="cleanCommodityLink" :href="getLink(item)">{{ getLink(item) }}</a>
+          </div>
         </template>
       </el-table-column>
       <el-table-column class-name="status-col" label="Status" width="80">
@@ -115,6 +122,13 @@ export default {
     this.getList()
   },
   methods: {
+    getCleanLink(link) {
+      const str = link.slice(1, -1)
+      return str.split(', ')
+    },
+    getLink(link) {
+      return link.replace("'", '')
+    },
     changeStatus(row) {
       const release_num = row.release_num ? 0 : 1
       const params = { release_num }
@@ -136,6 +150,9 @@ export default {
 </script>
 
 <style scoped lang='scss'>
+.cleanCommodityLink{
+  color: blue;
+}
 .edit-input {
   padding-right: 100px;
 }
